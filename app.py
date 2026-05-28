@@ -87,29 +87,24 @@ section[data-testid="stSidebar"]  { display: none !important; }
     content: ''; flex: 1; height: 1px; background: #E0D9F5;
 }
 
-/* ── Upload cards ── */
-.ucard {
+/* ── Upload widgets ── */
+[data-testid="stFileUploader"] {
     background: #FFFFFF;
     border: 1.5px solid #EAE6F8;
     border-radius: 16px;
-    padding: 1.2rem 1.3rem 0.7rem;
-    margin-bottom: 0.75rem;
+    padding: 1rem 1.2rem 0.9rem !important;
+    margin-bottom: 0.75rem !important;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
-.ucard:hover {
-    border-color: #A78BFA;
-    box-shadow: 0 4px 20px rgba(107,92,231,0.1);
+[data-testid="stFileUploader"]:hover {
+    border-color: #A78BFA !important;
+    box-shadow: 0 4px 20px rgba(107,92,231,0.08) !important;
 }
-.ucard-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; }
-.ucard-icon {
-    width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+[data-testid="stFileUploader"] label p {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    color: #1B1F3B !important;
 }
-.ic-red  { background: #FEF2F2; }
-.ic-amber{ background: #FFFBEB; }
-.ic-teal { background: #F0FDFA; }
-.ucard-title { font-size: 0.88rem; font-weight: 600; color: #1B1F3B; margin: 0; }
-.ucard-desc  { font-size: 0.75rem; color: #8B8BA7; margin: 0; }
 
 /* ── Status pills ── */
 .status-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 1.2rem 0 1.6rem; }
@@ -124,15 +119,6 @@ section[data-testid="stSidebar"]  { display: none !important; }
 
 /* ── Divider ── */
 .divider { height: 1px; background: #EAE6F8; margin: 1.5rem 0; }
-
-/* ── File uploader override ── */
-[data-testid="stFileUploader"] > div {
-    background: #FAFAF8 !important;
-    border: 1.5px dashed #D4CCF5 !important;
-    border-radius: 10px !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] span { color: #AAA4C8 !important; font-size: 0.8rem !important; }
-[data-testid="stFileUploaderDropzone"] { background: transparent !important; }
 
 /* ── Submit button ── */
 div[data-testid="stButton"] > button {
@@ -226,49 +212,20 @@ st.markdown("""
 # ── Upload section ────────────────────────────────────────────────────────────
 st.markdown('<div class="section-label">Upload files</div>', unsafe_allow_html=True)
 
-# Card 1 — PDF
-st.markdown("""
-<div class="ucard">
-  <div class="ucard-header">
-    <div class="ucard-icon ic-red">📄</div>
-    <div>
-      <p class="ucard-title">Content PDF Report</p>
-      <p class="ucard-desc">Campaign evidence report — URL, screenshot &amp; results extracted automatically</p>
-    </div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-pdf_file = st.file_uploader("pdf", type=["pdf"], label_visibility="collapsed", key="k_pdf")
+pdf_file = st.file_uploader(
+    "📄  Content PDF Report — campaign evidence (URL, screenshot & results extracted automatically)",
+    type=["pdf"], key="k_pdf"
+)
 
-# Card 2 — PPTX
-st.markdown("""
-<div class="ucard">
-  <div class="ucard-header">
-    <div class="ucard-icon ic-amber">📑</div>
-    <div>
-      <p class="ucard-title">PowerPoint Template</p>
-      <p class="ucard-desc">Your branded POE deck — slides 3, 4 &amp; 5 filled automatically, headers preserved</p>
-    </div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-pptx_file = st.file_uploader("pptx", type=["pptx"], label_visibility="collapsed", key="k_pptx")
+pptx_file = st.file_uploader(
+    "📑  PowerPoint Template — your branded POE deck (slides 3, 4 & 5 filled automatically)",
+    type=["pptx"], key="k_pptx"
+)
 
-# Card 3 — Advert images
-st.markdown("""
-<div class="ucard">
-  <div class="ucard-header">
-    <div class="ucard-icon ic-teal">🗂️</div>
-    <div>
-      <p class="ucard-title">Advert / LinkedIn Folder</p>
-      <p class="ucard-desc">All images from your LinkedIn Advert folder — arranged in a 2×2 grid on Slide 5</p>
-    </div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
 advert_files = st.file_uploader(
-    "adverts", type=["png","jpg","jpeg","gif","webp"],
-    accept_multiple_files=True, label_visibility="collapsed", key="k_adv",
+    "🗂️  Advert / LinkedIn Images — all images from your LinkedIn folder (placed in 2×2 grid on Slide 5)",
+    type=["png","jpg","jpeg","gif","webp"],
+    accept_multiple_files=True, key="k_adv",
 )
 
 # ── Status indicators ─────────────────────────────────────────────────────────
@@ -366,7 +323,7 @@ if run_btn:
         )
 
         progress_bar.progress(90)
-        status.markdown('<div class="proc-card">✅ &nbsp;<b>Step 3 / 4</b> &nbsp; Slides</div>', unsafe_allow_html=True)
+        status.markdown('<div class="proc-card">✅ &nbsp;<b>Step 3 / 4</b> &nbsp; Slides populated — headers preserved</div>', unsafe_allow_html=True)
 
         # Step 4 — Package
         status.markdown('<div class="proc-card">⏳ &nbsp;<b>Step 4 / 4</b> &nbsp; Packaging output file…</div>', unsafe_allow_html=True)
