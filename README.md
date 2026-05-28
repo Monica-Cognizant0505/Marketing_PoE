@@ -1,4 +1,4 @@
-# 🎈 Blank app template
+# 🎈 Marketing Automated Report Builder
 
 A simple Streamlit app template for you to modify!
 
