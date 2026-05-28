@@ -9,231 +9,146 @@ from config import (
     AZURE_OPENAI_API_VERSION,
 )
 
-# ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="POE Generator",
+    page_title="Marketing PoE",
     page_icon="📊",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-# ── Styles ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap');
 
-*, html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif !important;
-}
+html, body, [class*="css"] { font-family: 'Inter', sans-serif !important; }
 
-/* Background — warm white, not dark */
-.stApp {
-    background: #F7F4EF;
-    min-height: 100vh;
-}
+.stApp { background: #F5F3EF; }
 
-/* Hide sidebar toggle */
 [data-testid="collapsedControl"] { display: none !important; }
-section[data-testid="stSidebar"]  { display: none !important; }
+section[data-testid="stSidebar"] { display: none !important; }
 
-/* ── Hero ── */
+/* Hero */
 .hero {
-    background: linear-gradient(135deg, #1B1F3B 0%, #2D2260 55%, #1B1F3B 100%);
-    border-radius: 20px;
-    padding: 3rem 2.5rem 2.5rem;
+    background: linear-gradient(135deg, #1a1740 0%, #2e1f6e 50%, #1a1740 100%);
+    border-radius: 18px;
+    padding: 2.8rem 2rem 2.4rem;
     text-align: center;
     margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
 }
-.hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 70% 30%, rgba(120,80,255,0.25) 0%, transparent 60%),
-                radial-gradient(ellipse at 20% 80%, rgba(0,180,220,0.18) 0%, transparent 50%);
-    pointer-events: none;
-}
-.hero-eyebrow {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #B8A9FF;
-    font-size: 0.68rem; font-weight: 600;
-    letter-spacing: 2px; text-transform: uppercase;
-    padding: 5px 16px; border-radius: 50px;
-    margin-bottom: 1.3rem;
+.hero-tag {
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #c4b5fd;
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 2.5px; text-transform: uppercase;
+    padding: 4px 16px; border-radius: 50px;
+    margin-bottom: 1.2rem;
 }
 .hero h1 {
     font-family: 'Space Grotesk', sans-serif !important;
-    font-size: 2.5rem; font-weight: 700;
-    color: #FFFFFF;
-    margin: 0 0 0.7rem; line-height: 1.15;
-    letter-spacing: -0.5px;
+    font-size: 2.4rem; font-weight: 800;
+    color: #fff; margin: 0 0 0.6rem; line-height: 1.15;
 }
-.hero h1 em { font-style: normal; color: #A78BFA; }
-.hero-sub {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.95rem; font-weight: 400; margin: 0;
-}
+.hero h1 span { color: #a78bfa; }
+.hero p { color: rgba(255,255,255,0.45); font-size: 0.92rem; margin: 0; }
 
-/* ── Section label ── */
-.section-label {
-    font-size: 0.7rem; font-weight: 700;
-    color: #6B5CE7; letter-spacing: 2px; text-transform: uppercase;
-    margin: 1.8rem 0 1rem;
+/* Section title */
+.sec-title {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #7c3aed;
     display: flex; align-items: center; gap: 10px;
+    margin: 0 0 1.2rem;
 }
-.section-label::after {
-    content: ''; flex: 1; height: 1px; background: #E0D9F5;
-}
+.sec-title::after { content:''; flex:1; height:1px; background:#e5e0f8; }
 
+/* Status cards */
+.status-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 1.4rem 0; }
+.scard { background:#fff; border:1.5px solid #ece8f8; border-radius:12px; padding:0.8rem 1rem; text-align:center; }
+.scard.ok { border-color:#86efac; background:#f0fdf4; }
+.scard-label { font-size:0.65rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:3px; }
+.scard-val { font-size:0.85rem; font-weight:600; color:#374151; }
+.scard.ok .scard-val { color:#16a34a; }
 
+/* Divider */
+.div { height:1px; background:#ece8f8; margin:1.4rem 0; }
 
-/* ── Status pills ── */
-.status-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 1.2rem 0 1.6rem; }
-.status-pill {
-    background: #FFFFFF; border: 1.5px solid #EAE6F8;
-    border-radius: 12px; padding: 0.75rem 1rem; text-align: center;
-}
-.status-pill.ready { border-color: #6EE7B7; background: #F0FDF9; }
-.status-label { font-size: 0.68rem; font-weight: 600; color: #8B8BA7; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-.status-val   { font-size: 0.88rem; font-weight: 600; color: #1B1F3B; }
-.status-pill.ready .status-val { color: #059669; }
+/* Proc card */
+.proc { background:#fff; border:1.5px solid #ece8f8; border-radius:12px; padding:1rem 1.3rem; margin:0.4rem 0; font-size:0.88rem; color:#374151; }
 
-/* ── Divider ── */
-.divider { height: 1px; background: #EAE6F8; margin: 1.5rem 0; }
+/* Success */
+.ok-banner { background:#f0fdf4; border:1.5px solid #86efac; border-radius:14px; padding:1.1rem; text-align:center; color:#15803d; font-weight:600; font-size:0.92rem; margin:1rem 0; }
 
-/* ── Submit button ── */
+/* Result item */
+.ritem { background:#fff; border-left:3px solid #7c3aed; border-radius:0 8px 8px 0; padding:0.6rem 1rem; margin:0.3rem 0; font-size:0.82rem; color:#374151; }
+
+/* Streamlit overrides */
 div[data-testid="stButton"] > button {
-    width: 100% !important;
-    padding: 0.95rem 2rem !important;
-    font-size: 1rem !important; font-weight: 600 !important;
-    background: linear-gradient(135deg, #6B5CE7 0%, #4F46E5 100%) !important;
-    color: white !important; border: none !important;
-    border-radius: 14px !important;
-    box-shadow: 0 4px 20px rgba(107,92,231,0.35) !important;
-    letter-spacing: 0.2px; margin-top: 0.5rem;
-    transition: all 0.2s !important;
+    width:100% !important; padding:0.9rem !important;
+    font-size:0.98rem !important; font-weight:700 !important;
+    background: linear-gradient(135deg,#7c3aed,#4f46e5) !important;
+    color:#fff !important; border:none !important; border-radius:12px !important;
+    box-shadow: 0 4px 18px rgba(124,58,237,0.35) !important;
+    margin-top:0.6rem;
 }
-div[data-testid="stButton"] > button:hover {
-    background: linear-gradient(135deg, #7C6EF0 0%, #6058F0 100%) !important;
-    box-shadow: 0 6px 28px rgba(107,92,231,0.5) !important;
-    transform: translateY(-1px);
-}
-
-/* ── Download button ── */
 div[data-testid="stDownloadButton"] > button {
-    width: 100% !important; padding: 0.95rem 2rem !important;
-    font-size: 1rem !important; font-weight: 600 !important;
-    background: linear-gradient(135deg, #059669 0%, #0891B2 100%) !important;
-    color: white !important; border: none !important; border-radius: 14px !important;
-    box-shadow: 0 4px 20px rgba(5,150,105,0.3) !important; margin-top: 0.5rem;
+    width:100% !important; padding:0.9rem !important;
+    font-size:0.98rem !important; font-weight:700 !important;
+    background: linear-gradient(135deg,#059669,#0891b2) !important;
+    color:#fff !important; border:none !important; border-radius:12px !important;
+    box-shadow: 0 4px 18px rgba(5,150,105,0.3) !important;
 }
-
-/* ── Progress ── */
 [data-testid="stProgress"] > div > div {
-    background: linear-gradient(90deg, #6B5CE7, #4F46E5) !important;
-    border-radius: 50px !important;
+    background: linear-gradient(90deg,#7c3aed,#4f46e5) !important;
+    border-radius:50px !important;
 }
-
-/* ── Metrics ── */
 [data-testid="stMetric"] {
-    background: #FFFFFF !important; border: 1.5px solid #EAE6F8 !important;
-    border-radius: 14px !important; padding: 1rem 1.2rem !important;
+    background:#fff !important; border:1.5px solid #ece8f8 !important;
+    border-radius:12px !important; padding:1rem !important;
 }
-[data-testid="stMetricLabel"] p { color: #8B8BA7 !important; font-size: 0.75rem !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; }
-[data-testid="stMetricValue"]   { color: #6B5CE7 !important; font-size: 1.7rem !important; font-weight: 700 !important; }
-
-/* ── Tabs ── */
-.stTabs [data-baseweb="tab-list"] {
-    background: #FFFFFF !important; border: 1px solid #EAE6F8 !important;
-    border-radius: 12px !important; gap: 4px !important; padding: 4px !important;
-}
-.stTabs [data-baseweb="tab"] {
-    border-radius: 9px !important; color: #8B8BA7 !important;
-    font-size: 0.82rem !important; font-weight: 600 !important; padding: 6px 14px !important;
-}
-.stTabs [aria-selected="true"] {
-    background: linear-gradient(135deg, #6B5CE7, #4F46E5) !important; color: white !important;
-}
-
-/* ── Result items ── */
-.result-item {
-    background: #FFFFFF; border: 1px solid #EAE6F8;
-    border-left: 3px solid #6B5CE7;
-    border-radius: 8px; padding: 0.65rem 1rem;
-    margin: 0.3rem 0; font-size: 0.83rem; color: #374151; line-height: 1.5;
-}
-
-/* ── Success banner ── */
-.success-banner {
-    background: linear-gradient(135deg, #F0FDF9, #EFF6FF);
-    border: 1.5px solid #6EE7B7; border-radius: 16px;
-    padding: 1.2rem 1.5rem; text-align: center;
-    color: #065F46; font-weight: 600; font-size: 0.95rem; margin: 1rem 0;
-}
-
-/* ── Processing card ── */
-.proc-card {
-    background: #FFFFFF; border: 1.5px solid #EAE6F8;
-    border-radius: 14px; padding: 1.2rem 1.5rem; margin: 0.5rem 0;
-}
-
-.stAlert { border-radius: 12px !important; }
+[data-testid="stMetricValue"] { color:#7c3aed !important; font-size:1.6rem !important; font-weight:700 !important; }
+[data-testid="stMetricLabel"] p { color:#9ca3af !important; font-size:0.72rem !important; font-weight:600 !important; text-transform:uppercase !important; }
+.stTabs [data-baseweb="tab-list"] { background:#fff !important; border:1px solid #ece8f8 !important; border-radius:10px !important; padding:3px !important; }
+.stTabs [data-baseweb="tab"] { border-radius:8px !important; color:#9ca3af !important; font-size:0.8rem !important; font-weight:600 !important; }
+.stTabs [aria-selected="true"] { background:linear-gradient(135deg,#7c3aed,#4f46e5) !important; color:#fff !important; }
+.stAlert { border-radius:10px !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="hero">
-    <div class="hero-eyebrow">✦ &nbsp; Automated Report Builder</div>
-    <h1>Marketing <em>PoE</em></h1>
-    <p class="hero-sub">Upload your files · Click generate · Download your finished deck</p>
+    <div class="hero-tag">✦ Automated Report Builder</div>
+    <h1>Marketing <span>PoE</span></h1>
+    <p>Upload your files · Click generate · Download your finished deck</p>
 </div>
 """, unsafe_allow_html=True)
 
-# ── Upload section ────────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">Upload files</div>', unsafe_allow_html=True)
+# ── Uploads ───────────────────────────────────────────────────────────────────
+st.markdown('<div class="sec-title">Upload files</div>', unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.markdown("**📄 Content PDF Report**")
-    st.caption("Campaign evidence PDF")
-with col2:
-    st.markdown("**📑 PowerPoint Template**")
-    st.caption("Your branded POE deck")
-with col3:
-    st.markdown("**🗂️ Advert / LinkedIn**")
-    st.caption("LinkedIn folder images")
+pdf_file     = st.file_uploader("📄  Content PDF Report",              type=["pdf"],                                  key="k_pdf")
+pptx_file    = st.file_uploader("📑  PowerPoint Template",             type=["pptx"],                                 key="k_pptx")
+advert_files = st.file_uploader("🗂️  Advert / LinkedIn Images",        type=["png","jpg","jpeg","gif","webp"],
+                                 accept_multiple_files=True,                                                           key="k_adv")
 
-pdf_file = st.file_uploader("Content PDF Report", type=["pdf"], key="k_pdf")
-pptx_file = st.file_uploader("PowerPoint Template (.pptx)", type=["pptx"], key="k_pptx")
-advert_files = st.file_uploader(
-    "Advert / LinkedIn Images (select all images from folder)",
-    type=["png","jpg","jpeg","gif","webp"],
-    accept_multiple_files=True,
-    key="k_adv",
-)
-
-# ── Status indicators ─────────────────────────────────────────────────────────
-def _pill(label, value, ready=False):
-    cls = "status-pill ready" if ready else "status-pill"
-    return f'<div class="{cls}"><div class="status-label">{label}</div><div class="status-val">{value}</div></div>'
+# ── Status ────────────────────────────────────────────────────────────────────
+def _sc(label, val, ok):
+    cls = "scard ok" if ok else "scard"
+    return f'<div class="{cls}"><div class="scard-label">{label}</div><div class="scard-val">{val}</div></div>'
 
 st.markdown(f"""
-<div class="status-row">
-  {_pill("PDF Report",    "✓ Ready" if pdf_file   else "Waiting",     bool(pdf_file))}
-  {_pill("PPT Template",  "✓ Ready" if pptx_file  else "Waiting",     bool(pptx_file))}
-  {_pill("Advert Images", f"✓ {len(advert_files)} files" if advert_files else "Waiting", bool(advert_files))}
+<div class="status-grid">
+  {_sc("PDF Report",    "✓ Ready" if pdf_file        else "Waiting", bool(pdf_file))}
+  {_sc("PPT Template",  "✓ Ready" if pptx_file       else "Waiting", bool(pptx_file))}
+  {_sc("Advert Images", f"✓ {len(advert_files)} files" if advert_files else "Waiting", bool(advert_files))}
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+st.markdown('<div class="div"></div>', unsafe_allow_html=True)
 
-# ── Generate button ───────────────────────────────────────────────────────────
+# ── Generate ──────────────────────────────────────────────────────────────────
 run_btn = st.button("✦  Generate Proof of Execution PPT", use_container_width=True)
 
-# ── Processing ────────────────────────────────────────────────────────────────
 if run_btn:
     errors = []
     if not pdf_file:     errors.append("📄 Please upload the Content PDF Report.")
@@ -243,7 +158,6 @@ if run_btn:
         for e in errors: st.error(e)
         st.stop()
 
-    # Save uploads to temp dir
     tmp_dir   = tempfile.mkdtemp()
     pdf_path  = os.path.join(tmp_dir, "report.pdf")
     pptx_path = os.path.join(tmp_dir, "template.pptx")
@@ -258,28 +172,20 @@ if run_btn:
         with open(dest, "wb") as f: f.write(af.read())
         advert_paths.append(dest)
 
-    progress_bar = st.progress(0)
-    status       = st.empty()
+    bar    = st.progress(0)
+    status = st.empty()
 
     try:
-        # Step 1 — Extract PDF
-        status.markdown('<div class="proc-card">⏳ &nbsp;<b>Step 1 / 4</b> &nbsp; Extracting images &amp; text from PDF…</div>', unsafe_allow_html=True)
-        progress_bar.progress(10)
-
+        status.markdown('<div class="proc">⏳ <b>Step 1/4</b> — Extracting images & text from PDF…</div>', unsafe_allow_html=True)
+        bar.progress(10)
         from extractor import extract_pdf_content
         extraction = extract_pdf_content(pdf_path, tmp_dir)
         extraction["advert_images"] = advert_paths
+        bar.progress(28)
+        status.markdown(f'<div class="proc">✅ <b>Step 1/4</b> — Found <b>{len(extraction["images"])}</b> images across <b>{len(extraction["text_pages"])}</b> pages</div>', unsafe_allow_html=True)
 
-        progress_bar.progress(28)
-        status.markdown(
-            f'<div class="proc-card">✅ &nbsp;<b>Step 1 / 4</b> &nbsp; Found <b>{len(extraction["images"])}</b> images across <b>{len(extraction["text_pages"])}</b> pages</div>',
-            unsafe_allow_html=True
-        )
-
-        # Step 2 — AI analysis
-        status.markdown('<div class="proc-card">⏳ &nbsp;<b>Step 2 / 4</b> &nbsp; Analysing content with Azure OpenAI…</div>', unsafe_allow_html=True)
-        progress_bar.progress(35)
-
+        status.markdown('<div class="proc">⏳ <b>Step 2/4</b> — Analysing with Azure OpenAI…</div>', unsafe_allow_html=True)
+        bar.progress(35)
         from ai_analyzer import analyze_with_azure
         analysis = analyze_with_azure(
             extraction=extraction,
@@ -292,102 +198,72 @@ if run_btn:
         )
         if advert_paths:
             analysis["slide5_image_path"] = advert_paths[0]
+        bar.progress(65)
+        status.markdown('<div class="proc">✅ <b>Step 2/4</b> — AI analysis complete</div>', unsafe_allow_html=True)
 
-        progress_bar.progress(65)
-        status.markdown('<div class="proc-card">✅ &nbsp;<b>Step 2 / 4</b> &nbsp; AI analysis complete</div>', unsafe_allow_html=True)
-
-        # Step 3 — Populate PPTX
-        status.markdown('<div class="proc-card">⏳ &nbsp;<b>Step 3 / 4</b> &nbsp; Populating PowerPoint template…</div>', unsafe_allow_html=True)
-        progress_bar.progress(70)
-
+        status.markdown('<div class="proc">⏳ <b>Step 3/4</b> — Populating PowerPoint…</div>', unsafe_allow_html=True)
+        bar.progress(70)
         from pptx_writer import populate_pptx
         output_pptx = os.path.join(tmp_dir, "proof_of_execution.pptx")
-        populate_pptx(
-            template_path=pptx_path,
-            output_path=output_pptx,
-            analysis=analysis,
-            extraction=extraction,
-        )
+        populate_pptx(template_path=pptx_path, output_path=output_pptx, analysis=analysis, extraction=extraction)
+        bar.progress(90)
+        status.markdown('<div class="proc">✅ <b>Step 3/4</b> — Slides populated</div>', unsafe_allow_html=True)
 
-        progress_bar.progress(90)
-        status.markdown('<div class="proc-card">✅ &nbsp;<b>Step 3 / 4</b> &nbsp; Slides populated — headers preserved</div>', unsafe_allow_html=True)
-
-        # Step 4 — Package
-        status.markdown('<div class="proc-card">⏳ &nbsp;<b>Step 4 / 4</b> &nbsp; Packaging output file…</div>', unsafe_allow_html=True)
-        progress_bar.progress(96)
-        with open(output_pptx, "rb") as f:
-            pptx_bytes = f.read()
-        progress_bar.progress(100)
+        status.markdown('<div class="proc">⏳ <b>Step 4/4</b> — Packaging output…</div>', unsafe_allow_html=True)
+        bar.progress(96)
+        with open(output_pptx, "rb") as f: pptx_bytes = f.read()
+        bar.progress(100)
         status.empty()
 
-        # ── Success ───────────────────────────────────────────────────────────
-        st.markdown("""
-        <div class="success-banner">
-            ✦ &nbsp; Proof of Execution deck generated successfully!
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown('<div class="ok-banner">✦ Proof of Execution deck generated successfully!</div>', unsafe_allow_html=True)
 
-        # Metrics
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("URLs",         len(analysis.get("urls", [])))
         m2.metric("PDF Images",   len(extraction.get("images", [])))
         m3.metric("Syndication",  len(analysis.get("syndication_results", [])))
         m4.metric("Advert Files", len(advert_paths))
 
-        # Preview tabs
-        t1, t2, t3, t4 = st.tabs(["🔗 URLs", "📸 PDF Screenshots", "📢 Syndication", "💼 LinkedIn"])
-
+        t1, t2, t3, t4 = st.tabs(["🔗 URLs", "📸 Screenshots", "📢 Syndication", "💼 LinkedIn"])
         with t1:
-            urls = analysis.get("urls", [])
-            for i, u in enumerate(urls, 1):
-                st.markdown(f'<div class="result-item"><b style="color:#6B5CE7">#{i}</b> &nbsp;{u}</div>', unsafe_allow_html=True)
-            if not urls:
-                st.info("No URLs extracted.")
-
+            for i, u in enumerate(analysis.get("urls", []), 1):
+                st.markdown(f'<div class="ritem"><b style="color:#7c3aed">#{i}</b> &nbsp;{u}</div>', unsafe_allow_html=True)
+            if not analysis.get("urls"): st.info("No URLs found.")
         with t2:
             imgs = extraction.get("images", [])
             if imgs:
-                for row_start in range(0, min(9, len(imgs)), 3):
+                for r in range(0, min(9, len(imgs)), 3):
                     cols = st.columns(3)
-                    for j, col in enumerate(cols):
-                        idx = row_start + j
-                        if idx < len(imgs):
-                            with col:
-                                try: st.image(imgs[idx], use_container_width=True)
-                                except: st.caption(Path(imgs[idx]).name)
-            else:
-                st.info("No embedded images found.")
-
+                    for j, c in enumerate(cols):
+                        if r+j < len(imgs):
+                            with c:
+                                try: st.image(imgs[r+j], use_container_width=True)
+                                except: st.caption(Path(imgs[r+j]).name)
+            else: st.info("No images found.")
         with t3:
             for item in analysis.get("syndication_results", []):
-                st.markdown(f'<div class="result-item">{item}</div>', unsafe_allow_html=True)
-            if not analysis.get("syndication_results"):
-                st.info("No syndication data found.")
-
+                st.markdown(f'<div class="ritem">{item}</div>', unsafe_allow_html=True)
+            if not analysis.get("syndication_results"): st.info("No syndication data.")
         with t4:
             for item in analysis.get("linkedin_results", []):
-                st.markdown(f'<div class="result-item">{item}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="ritem">{item}</div>', unsafe_allow_html=True)
             if advert_paths:
                 st.markdown("**Uploaded advert images:**")
-                for row_start in range(0, min(6, len(advert_paths)), 3):
+                for r in range(0, min(6, len(advert_paths)), 3):
                     cols = st.columns(3)
-                    for j, col in enumerate(cols):
-                        idx = row_start + j
-                        if idx < len(advert_paths):
-                            with col:
-                                try: st.image(advert_paths[idx], use_container_width=True)
-                                except: st.caption(Path(advert_paths[idx]).name)
+                    for j, c in enumerate(cols):
+                        if r+j < len(advert_paths):
+                            with c:
+                                try: st.image(advert_paths[r+j], use_container_width=True)
+                                except: st.caption(Path(advert_paths[r+j]).name)
 
-        # Download
-        st.markdown('<div class="divider"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="div"></div>', unsafe_allow_html=True)
         st.download_button(
-            label="⬇️  Download  proof_of_execution.pptx",
+            label="⬇️  Download proof_of_execution.pptx",
             data=pptx_bytes,
             file_name="proof_of_execution.pptx",
             mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
             use_container_width=True,
         )
-
         with st.expander("🔍 Raw AI Analysis JSON"):
             st.json(analysis)
 
