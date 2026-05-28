@@ -88,22 +88,24 @@ section[data-testid="stSidebar"]  { display: none !important; }
 }
 
 /* ── Upload widgets ── */
-[data-testid="stFileUploader"] {
-    background: #FFFFFF;
-    border: 1.5px solid #EAE6F8;
-    border-radius: 16px;
-    padding: 1rem 1.2rem 0.9rem !important;
-    margin-bottom: 0.75rem !important;
-    transition: border-color 0.2s, box-shadow 0.2s;
+[data-testid="stFileUploaderDropzone"] {
+    background: #FFFFFF !important;
+    border: 1.5px solid #EAE6F8 !important;
+    border-radius: 16px !important;
+    padding: 1.2rem !important;
 }
-[data-testid="stFileUploader"]:hover {
+[data-testid="stFileUploaderDropzone"]:hover {
     border-color: #A78BFA !important;
     box-shadow: 0 4px 20px rgba(107,92,231,0.08) !important;
 }
+[data-testid="stFileUploaderDropzoneInstructions"] {
+    display: none !important;
+}
 [data-testid="stFileUploader"] label p {
-    font-size: 0.88rem !important;
+    font-size: 0.9rem !important;
     font-weight: 600 !important;
     color: #1B1F3B !important;
+    margin-bottom: 0.4rem !important;
 }
 
 /* ── Status pills ── */
@@ -212,20 +214,16 @@ st.markdown("""
 # ── Upload section ────────────────────────────────────────────────────────────
 st.markdown('<div class="section-label">Upload files</div>', unsafe_allow_html=True)
 
-pdf_file = st.file_uploader(
-    "📄  Content PDF Report — campaign evidence (URL, screenshot & results extracted automatically)",
-    type=["pdf"], key="k_pdf"
-)
+st.markdown('<p style="font-size:0.82rem;font-weight:700;color:#1B1F3B;margin:0 0 4px">📄 &nbsp;Content PDF Report</p><p style="font-size:0.75rem;color:#8B8BA7;margin:0 0 8px">Campaign evidence — URL, screenshot &amp; results extracted automatically</p>', unsafe_allow_html=True)
+pdf_file = st.file_uploader("pdf_report", type=["pdf"], label_visibility="collapsed", key="k_pdf")
 
-pptx_file = st.file_uploader(
-    "📑  PowerPoint Template — your branded POE deck (slides 3, 4 & 5 filled automatically)",
-    type=["pptx"], key="k_pptx"
-)
+st.markdown('<p style="font-size:0.82rem;font-weight:700;color:#1B1F3B;margin:1rem 0 4px">📑 &nbsp;PowerPoint Template</p><p style="font-size:0.75rem;color:#8B8BA7;margin:0 0 8px">Your branded POE deck — slides 3, 4 &amp; 5 filled automatically</p>', unsafe_allow_html=True)
+pptx_file = st.file_uploader("pptx_template", type=["pptx"], label_visibility="collapsed", key="k_pptx")
 
+st.markdown('<p style="font-size:0.82rem;font-weight:700;color:#1B1F3B;margin:1rem 0 4px">🗂️ &nbsp;Advert / LinkedIn Images</p><p style="font-size:0.75rem;color:#8B8BA7;margin:0 0 8px">All images from your LinkedIn folder — placed in 2×2 grid on Slide 5</p>', unsafe_allow_html=True)
 advert_files = st.file_uploader(
-    "🗂️  Advert / LinkedIn Images — all images from your LinkedIn folder (placed in 2×2 grid on Slide 5)",
-    type=["png","jpg","jpeg","gif","webp"],
-    accept_multiple_files=True, key="k_adv",
+    "advert_images", type=["png","jpg","jpeg","gif","webp"],
+    accept_multiple_files=True, label_visibility="collapsed", key="k_adv",
 )
 
 # ── Status indicators ─────────────────────────────────────────────────────────
